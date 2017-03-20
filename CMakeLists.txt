@@ -11,6 +11,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include_directories(${CMAKE_JS_INC})
 
 file(GLOB LIBTORRENT_SOURCE_FILES "src/*.cpp")
+list(REMOVE_ITEM LIBTORRENT_SOURCE_FILES "src/LibtorrentAddon.cpp")
 
 # plain static lib for reuse
 add_library(torrent_node_static STATIC ${LIBTORRENT_SOURCE_FILES})
