@@ -66,8 +66,8 @@ class LibtorrentNodeConan(ConanFile):
         self.run('npm run compile -- %s %s %s %s' % (debug, arch, runtime, runtime_version))
 
     def package(self):
-        self.copy("*.hpp", dst="include/libtorrent-node/", src="libtorrent-node/")
-        self.copy("*.h", dst="include/libtorrent-node/", src="libtorrent-node/")
+        self.copy("*.hpp", dst="include/libtorrent-node/", src="libtorrent-node/src/")
+        self.copy("*.h", dst="include/libtorrent-node/", src="libtorrent-node/src/")
         self.copy("*.a", dst="lib", keep_path=False)
         self.copy("*.lib", dst="lib", keep_path=False)
         self.copy("*.node", dst="addon", keep_path=False)
