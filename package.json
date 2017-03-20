@@ -1,0 +1,22 @@
+{
+  "name": "libtorrent-bindings",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install": "conan install --build=missing && cmake-js compile",
+    "compile": "cmake-js compile",
+    "rebuild": "cmake-js rebuild",
+    "test": "mocha --recursive",
+    "test_electron": "electron-mocha --recursive"
+  },
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "cmake-js": "^3.4.1",
+    "nan": "^2.5.1"
+  },
+  "devDependencies": {
+    "electron-mocha": "^3.3.0",
+    "mocha": "^3.2.0"
+  }
+}
