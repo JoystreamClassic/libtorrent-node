@@ -1,0 +1,15 @@
+Setup:
+
+By default when you install the package it will build node module:
+
+    npm install
+
+
+To use the package in electron, run rebuild script with electron runtime otpions:
+
+    npm run rebuild -- --runtime=electron --runtime-version=1.6.1
+
+
+If you built electron module and want to rebuild node:
+
+    npm run rebuild
