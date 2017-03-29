@@ -10,6 +10,8 @@ NAN_MODULE_INIT(TorrentInfo::Init) {
 
   Nan::SetPrototypeMethod(tpl, "name", name);
   Nan::SetPrototypeMethod(tpl, "totalSize", total_size);
+  Nan::SetPrototypeMethod(tpl, "pieceLength", piece_length);
+  Nan::SetPrototypeMethod(tpl, "numPieces", num_pieces);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("TorrentInfo").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -63,4 +65,18 @@ NAN_METHOD(TorrentInfo::total_size) {
     std::int64_t total_size = TorrentInfo::Unwrap(info.This())->total_size();
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(total_size));
+}
+
+NAN_METHOD(TorrentInfo::piece_length) {
+
+    int piece_length = TorrentInfo::Unwrap(info.This())->total_size();
+
+    info.GetReturnValue().Set(Nan::New<v8::Number>(piece_length));
+}
+
+NAN_METHOD(TorrentInfo::num_pieces) {
+
+    int num_pieces = TorrentInfo::Unwrap(info.This())->total_size();
+
+    info.GetReturnValue().Set(Nan::New<v8::Number>(num_pieces));
 }
