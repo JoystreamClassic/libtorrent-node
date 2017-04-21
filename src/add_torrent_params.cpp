@@ -85,8 +85,9 @@ libtorrent::add_torrent_params decode(const v8::Local<v8::Value> & v) {
 
   try {
     if (HAS_KEY(o, RESUME_DATA_KEY)) {
-      std::string str = GET_STD_STRING(o, RESUME_DATA_KEY);
-      std::copy(str.begin(), str.end(), std::back_inserter(atp.resume_data));
+      auto begin = GET_BUFFER_BEGIN(o, RESUME_DATA_KEY);
+      auto end = GET_BUFFER_END(o, RESUME_DATA_KEY);
+      std::copy(begin, end, std::back_inserter(atp.resume_data));
     }
   } catch(const std::runtime_error &) { }
 
