@@ -1,5 +1,7 @@
 #include "torrent_info.h"
 #include "utils.hpp"
+#include "entry.hpp"
+
 #include <libtorrent/create_torrent.hpp>
 
 Nan::Persistent<v8::Function> TorrentInfo::constructor;
@@ -13,7 +15,7 @@ NAN_MODULE_INIT(TorrentInfo::Init) {
   Nan::SetPrototypeMethod(tpl, "totalSize", total_size);
   Nan::SetPrototypeMethod(tpl, "pieceLength", piece_length);
   Nan::SetPrototypeMethod(tpl, "numPieces", num_pieces);
-  Nan::SetPrototypeMethod(tpl, "toBuffer", to_buffer);
+  Nan::SetPrototypeMethod(tpl, "toBencodedEntry", to_bencoded_entry);
   Nan::SetPrototypeMethod(tpl, "isValid", is_valid);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
@@ -45,25 +47,12 @@ NAN_METHOD(TorrentInfo::NewInstance) {
       obj = new TorrentInfo(ti);
 
     } else if (ARGUMENTS_IS_OBJECT(0)) {
-      // create torrent info from bencoded metadata
-      if(!info[0]->IsUint8Array()){
-        return Nan::ThrowTypeError("Argument is not a node buffer");
+      try {
+        auto decoded = libtorrent::node::entry::decode(info[0]);
+        obj = new TorrentInfo(boost::shared_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(decoded)));
+      } catch(std::exception &e) {
+        return Nan::ThrowTypeError(e.what());
       }
-
-      auto length = ::node::Buffer::Length(info[0]);
-      auto encoded = ::node::Buffer::Data(info[0]);
-
-      libtorrent::bdecode_node data;
-      libtorrent::error_code ec;
-
-      libtorrent::bdecode(encoded, encoded + length, data, ec);
-
-      if(ec) {
-        return Nan::ThrowTypeError(ec.message().c_str());
-      }
-
-      obj = new TorrentInfo(boost::shared_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(data)));
-
     } else {
       return Nan::ThrowTypeError("Cannot construct TorrentInfo from supplied argument");
     }
@@ -106,24 +95,14 @@ NAN_METHOD(TorrentInfo::num_pieces) {
     info.GetReturnValue().Set(Nan::New<v8::Number>(num_pieces));
 }
 
-NAN_METHOD(TorrentInfo::to_buffer) {
+NAN_METHOD(TorrentInfo::to_bencoded_entry) {
     auto ti = TorrentInfo::Unwrap(info.This());
-
-    std::vector<char> encoded;
 
     libtorrent::create_torrent ct(*ti);
 
-    auto data = ct.generate();
+    auto entry = ct.generate();
 
-    if(data.type() != libtorrent::entry::undefined_t) {
-        libtorrent::bencode(std::back_inserter(encoded), data);
-    }
-
-    auto buffer = Nan::NewBuffer(encoded.size()).ToLocalChecked();
-    auto pbuf = ::node::Buffer::Data(buffer);
-    std::copy(encoded.begin(), encoded.end(), pbuf);
-
-    info.GetReturnValue().Set(buffer);
+    info.GetReturnValue().Set(libtorrent::node::entry::encode(entry));
 }
 
 NAN_METHOD(TorrentInfo::is_valid) {

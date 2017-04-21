@@ -28,7 +28,7 @@ class TorrentInfo: public Nan::ObjectWrap {
       static NAN_METHOD(total_size);
       static NAN_METHOD(piece_length);
       static NAN_METHOD(num_pieces);
-      static NAN_METHOD(to_buffer);
+      static NAN_METHOD(to_bencoded_entry);
       static NAN_METHOD(is_valid);
 
 };

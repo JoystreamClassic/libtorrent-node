@@ -9,8 +9,8 @@
 #include "utils.hpp"
 
 #include <libtorrent/entry.hpp>
-
-#define ENTRY_KEY "entry"
+#include <libtorrent/bencode.hpp>
+#include <libtorrent/bdecode.hpp>
 
 namespace libtorrent {
 namespace node {
@@ -18,20 +18,37 @@ namespace entry {
 
 v8::Local<v8::Object> encode(const libtorrent::entry & e) {
 
-  v8::Local<v8::Object> o = Nan::New<v8::Object>();
+  std::vector<char> encoded;
 
-  SET_STD_STRING(o, ENTRY_KEY, e.to_string());
+  if(e.type() != libtorrent::entry::undefined_t) {
+      libtorrent::bencode(std::back_inserter(encoded), e);
+  }
 
-  return o;
+  auto buffer = Nan::NewBuffer(encoded.size()).ToLocalChecked();
+  auto pbuf = ::node::Buffer::Data(buffer);
+  std::copy(encoded.begin(), encoded.end(), pbuf);
+
+  return buffer;
 }
 
-libtorrent::entry decode(const v8::Local<v8::Object> & o) {
-  libtorrent::entry e;
+libtorrent::bdecode_node decode(const v8::Local<v8::Value> & o) {
+  if(!o->IsUint8Array()){
+    throw std::runtime_error("object not a node buffer");
+  }
 
-  // TODO
-  //auto v = GET_VAL(o, ENTRY_KEY);
+  auto length = ::node::Buffer::Length(o);
+  auto encoded = ::node::Buffer::Data(o);
 
-  return e;
+  libtorrent::bdecode_node entry;
+  libtorrent::error_code ec;
+
+  libtorrent::bdecode(encoded, encoded + length, entry, ec);
+
+  if(ec) {
+    throw std::runtime_error(ec.message().c_str());
+  }
+
+  return entry;
 }
 
 }
