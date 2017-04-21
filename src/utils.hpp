@@ -271,8 +271,11 @@ namespace std_lib_utils {
   }                                                                           \
   v8::Local<v8::Function> var = v8::Local<v8::Function>::Cast(info[i]);
 
-#define ARGUMENTS_IS_OBJECT(i)                                               \
+#define ARGUMENTS_IS_OBJECT(i)                                                \
   (info.Length() >= (i) && info[i]->IsObject())
+
+#define ARGUMENTS_IS_BUFFER(i)                                                \
+  (info.Length() >= (i) && node::Buffer::HasInstance(info[i]))
 
 ///////////////////////////////////
 
