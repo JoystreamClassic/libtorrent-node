@@ -1,6 +1,7 @@
 #include "torrent_info.h"
 #include "utils.hpp"
 #include "entry.hpp"
+#include "sha1_hash.hpp"
 
 #include <libtorrent/create_torrent.hpp>
 
@@ -17,6 +18,7 @@ NAN_MODULE_INIT(TorrentInfo::Init) {
   Nan::SetPrototypeMethod(tpl, "numPieces", num_pieces);
   Nan::SetPrototypeMethod(tpl, "toBencodedEntry", to_bencoded_entry);
   Nan::SetPrototypeMethod(tpl, "isValid", is_valid);
+  Nan::SetPrototypeMethod(tpl, "infoHash", info_hash);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("TorrentInfo").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -109,3 +111,10 @@ NAN_METHOD(TorrentInfo::is_valid) {
   auto ti = TorrentInfo::Unwrap(info.This());
   info.GetReturnValue().Set(ti->is_valid());
 }
+
+NAN_METHOD(TorrentInfo::info_hash) {
+
+    libtorrent::sha1_hash h(TorrentInfo::Unwrap(info.This())->info_hash());
+
+    RETURN(libtorrent::node::sha1_hash::encode(h));
+};
