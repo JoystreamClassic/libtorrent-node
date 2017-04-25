@@ -215,6 +215,12 @@ namespace std_lib_utils {
 // @return {std::string}
 #define GET_STD_STRING(o, key)    (ToNative<std::string>(GET_VAL(o, key)))
 
+// @return {char*}
+#define GET_BUFFER_BEGIN(o, key)  (::node::Buffer::Data(GET_VAL(o, key)))
+
+// @return {char*}
+#define GET_BUFFER_END(o, key)    (GET_BUFFER_BEGIN(o, key) + ::node::Buffer::Length(GET_VAL(o, key)))
+
 ///////////////////////////////////////////////////////////////////////////////
 /// Utility macros from @fanatid in macro.hpp@a4901b
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,8 +277,11 @@ namespace std_lib_utils {
   }                                                                           \
   v8::Local<v8::Function> var = v8::Local<v8::Function>::Cast(info[i]);
 
-#define ARGUMENTS_IS_OBJECT(i)                                               \
+#define ARGUMENTS_IS_OBJECT(i)                                                \
   (info.Length() >= (i) && info[i]->IsObject())
+
+#define ARGUMENTS_IS_BUFFER(i)                                                \
+  (info.Length() >= (i) && node::Buffer::HasInstance(info[i]))
 
 ///////////////////////////////////
 

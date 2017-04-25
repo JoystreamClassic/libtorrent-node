@@ -76,7 +76,7 @@ NAN_MODULE_INIT(TorrentHandle::Init) {
    Nan::SetPrototypeMethod(tpl, "downloadLimit", download_limit);
    Nan::SetPrototypeMethod(tpl, "setSequentialDownload", set_sequential_download);
    Nan::SetPrototypeMethod(tpl, "connectPeer", connect_peer);
-   //Nan::SetPrototypeMethod(tpl, "save_path", save_path);
+   Nan::SetPrototypeMethod(tpl, "savePath", save_path);
    //Nan::SetPrototypeMethod(tpl, "make_magnet_link", make_magnet_link);
    Nan::SetPrototypeMethod(tpl, "setMaxUploads", set_max_uploads);
    Nan::SetPrototypeMethod(tpl, "maxUploads", max_uploads);
@@ -678,10 +678,11 @@ NAN_METHOD(TorrentHandle::connect_peer) {
     RETURN_VOID;
 };
 
-/*NAN_METHOD(TorrentHandle::save_path) {
-
-    info.GetReturnValue().Set(Nan::New<String>(TorrentHandle::Unwrap(info.This())->save_path()).ToLocalChecked());
-};*/
+NAN_METHOD(TorrentHandle::save_path) {
+    auto handle = TorrentHandle::Unwrap(info.This());
+    libtorrent::torrent_status st = handle->status(libtorrent::torrent_handle::query_save_path);
+    info.GetReturnValue().Set(Nan::New<String>(st.save_path).ToLocalChecked());
+};
 
 NAN_METHOD(TorrentHandle::set_max_uploads) {
 

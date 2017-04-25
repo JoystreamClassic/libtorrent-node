@@ -38,7 +38,7 @@ v8::Local<v8::Object> encode(const libtorrent::add_torrent_params & atp) {
     SET_STD_STRING(o, SAVE_PATH_KEY, atp.save_path);
     SET_VAL(o, INFO_HASH_KEY, libtorrent::node::sha1_hash::encode(atp.info_hash));
     SET_STD_STRING(o, URL_KEY, atp.url);
-    SET_STD_STRING(o, RESUME_DATA_KEY, std::string(atp.resume_data.begin(), atp.resume_data.end()));
+    //SET_STD_STRING(o, RESUME_DATA_KEY, std::string(atp.resume_data.begin(), atp.resume_data.end()));
     SET_INT32(o, UPLOAD_LIMIT_KEY, atp.upload_limit);
     SET_INT32(o, DOWNLOAD_LIMIT_KEY, atp.download_limit);
 
@@ -85,8 +85,9 @@ libtorrent::add_torrent_params decode(const v8::Local<v8::Value> & v) {
 
   try {
     if (HAS_KEY(o, RESUME_DATA_KEY)) {
-      std::string str = GET_STD_STRING(o, RESUME_DATA_KEY);
-      std::copy(str.begin(), str.end(), std::back_inserter(atp.resume_data));
+      auto begin = GET_BUFFER_BEGIN(o, RESUME_DATA_KEY);
+      auto end = GET_BUFFER_END(o, RESUME_DATA_KEY);
+      std::copy(begin, end, std::back_inserter(atp.resume_data));
     }
   } catch(const std::runtime_error &) { }
 

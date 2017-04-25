@@ -854,6 +854,7 @@ v8::Local<v8::Object> encode(const libtorrent::state_update_alert * a) {
     status->Set(status->Length(), torrent_status::encode(m));
   }
 
+  SET_VAL(o, "status", status);
 
   // std::vector<torrent_status> const status;
 

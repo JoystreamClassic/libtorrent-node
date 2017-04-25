@@ -16,7 +16,6 @@ namespace node {
 namespace error_code {
 
   v8::Local<v8::Object> encode(const libtorrent::error_code & a);
-  libtorrent::error_code decode(const v8::Local<v8::Object> & o);
 
 }}}
 
