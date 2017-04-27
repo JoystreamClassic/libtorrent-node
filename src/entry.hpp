@@ -12,12 +12,13 @@
 
 namespace libtorrent {
   class entry;
+  class bdecode_node;
 
 namespace node {
 namespace entry {
 
   v8::Local<v8::Object> encode(const libtorrent::entry & a);
-  libtorrent::entry decode(const v8::Local<v8::Object> & o);
+  libtorrent::bdecode_node decode(const v8::Local<v8::Value> & o);
 
 }}}
 
