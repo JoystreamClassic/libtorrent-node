@@ -322,7 +322,7 @@ NAN_METHOD(Session::dht_announce) {
 }
 
 NAN_METHOD(Session::dht_get_peers) {
-  REQUIRE_ARGUMENTS(2);
+  REQUIRE_ARGUMENTS(1);
 
   ARGUMENTS_REQUIRE_DECODED(0,info_hash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode);
 
