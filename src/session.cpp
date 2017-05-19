@@ -326,11 +326,9 @@ NAN_METHOD(Session::dht_get_peers) {
 
   ARGUMENTS_REQUIRE_DECODED(0,info_hash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode);
 
-  unsigned int listen_port = info[1]->Uint32Value();
-
   Session* session = ObjectWrap::Unwrap<Session>(info.This());
 
-  session->_session->dht_announce(info_hash, listen_port);
+  session->_session->dht_get_peers(info_hash);
 
   RETURN_VOID;
 }
