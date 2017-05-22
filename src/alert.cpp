@@ -828,7 +828,7 @@ v8::Local<v8::Object> encode(const libtorrent::incoming_connection_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::alert *>(a));
 
   SET_INT32(o, SOCKET_TYPE_KEY, a->socket_type);
-  //SET_VAL(o, ENDPOINT_KEY, endpoint::encode(a.endpoint));
+  SET_VAL(o, IP_KEY, libtorrent::node::endpoint::encode(a->ip));
 
   return o;
 }
