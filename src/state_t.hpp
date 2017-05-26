@@ -23,8 +23,8 @@ namespace state_t {
    * Encoding as Number
    */
 
-  v8::Local<v8::Value> createValue(libtorrent::torrent_status::state_t state);
-  libtorrent::torrent_status::state_t fromValue(const v8::Local<v8::Value> & v);
+  v8::Local<v8::Value> encode(libtorrent::torrent_status::state_t state);
+  libtorrent::torrent_status::state_t decode(const v8::Local<v8::Value> & v);
 
 }
 }

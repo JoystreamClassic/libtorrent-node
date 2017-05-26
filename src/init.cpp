@@ -10,6 +10,7 @@
 #include "torrent_handle.h"
 #include "torrent_info.h"
 #include "alert.hpp"
+#include "state_t.hpp"
 
 namespace libtorrent {
 namespace node {
@@ -19,6 +20,7 @@ NAN_MODULE_INIT(Init) {
   TorrentInfo::Init(target);
   libtorrent::node::Session::Init(target);
   libtorrent::node::alert_types::InitAlertTypes(target);
+  state_t::Init(target);
 }
 
 }}
