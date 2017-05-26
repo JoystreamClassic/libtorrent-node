@@ -372,8 +372,8 @@ v8::Local<v8::Object> encode(const libtorrent::performance_alert * a) {
 v8::Local<v8::Object> encode(const libtorrent::state_changed_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-  SET_VAL(o, STATE_KEY, state_t::createValue(a->state));
-  SET_VAL(o, PREV_STATE_KEY, state_t::createValue(a->prev_state));
+  SET_VAL(o, STATE_KEY, state_t::encode(a->state));
+  SET_VAL(o, PREV_STATE_KEY, state_t::encode(a->prev_state));
 
   return o;
 }
