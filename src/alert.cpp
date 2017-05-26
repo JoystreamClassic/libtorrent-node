@@ -11,6 +11,7 @@
 #include "torrent_status.hpp"
 #include "add_torrent_params.hpp"
 #include "endpoint.hpp"
+#include "peer_id.hpp"
 #include "entry.hpp"
 #include "error_code.hpp"
 #include "sha1_hash.hpp"
@@ -290,9 +291,8 @@ v8::Local<v8::Object> encode(const libtorrent::torrent_alert * a) {
 v8::Local<v8::Object> encode(const libtorrent::peer_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-  SET_VAL(o, IP_KEY, endpoint::encode(a->ip));
-  // TODO: peer_id class
-  //SET_OBJ(o, PID_KEY,) // pid;
+  SET_VAL(o, IP_KEY, node::endpoint::encode(a->ip));
+  SET_VAL(o, PID_KEY, node::peer_id::encode(a->pid));
 
   return o;
 }
