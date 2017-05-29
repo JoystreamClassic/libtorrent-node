@@ -10,7 +10,7 @@
 #include "utils.hpp"
 
 #define ADDRESS_KEY "address"
-#define PORT_KEY "key"
+#define PORT_KEY "port"
 
 namespace libtorrent {
 namespace node {

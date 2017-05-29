@@ -14,7 +14,7 @@ namespace libtorrent {
 namespace node {
 namespace state_t {
 
-  #define SET_STATE_T(o, name) SET_VAL(o, #name, createValue(libtorrent::torrent_status::state_t::name));
+  #define SET_STATE_T(o, name) SET_VAL(o, #name, encode(libtorrent::torrent_status::state_t::name));
 
   NAN_MODULE_INIT(Init) {
 
@@ -32,7 +32,7 @@ namespace state_t {
     SET_VAL(target, "TorrentState", object);
   }
 
-  v8::Local<v8::Value> createValue(libtorrent::torrent_status::state_t state) {
+  v8::Local<v8::Value> encode(libtorrent::torrent_status::state_t state) {
 
     switch(state) {
       case libtorrent::torrent_status::state_t::unused_enum_for_backwards_compatibility: return Nan::New(0);
@@ -49,7 +49,7 @@ namespace state_t {
 
   }
 
-  libtorrent::torrent_status::state_t fromValue(const v8::Local<v8::Value> & v) {
+  libtorrent::torrent_status::state_t decode(const v8::Local<v8::Value> & v) {
 
     uint32_t value = ToNative<uint32_t>(v);
 
