@@ -14,3 +14,38 @@ describe('libtorrent addon', function() {
     })
 })
 
+describe('Torrent Info', function() {
+
+    it('init should be successfull', function() {
+      let torrentInfo
+      let correctPath = './test/sintel.torrent'
+      try {
+        torrentInfo = new libtorrent.TorrentInfo(correctPath)
+      } catch(err) {
+        // Do nothing
+      }
+      assert(torrentInfo)
+    })
+
+    it('init should failed : Cannot construct TorrentInfo from supplied argument ', function() {
+      let torrentInfo
+      let undefinedArg
+      try {
+        torrentInfo = new libtorrent.TorrentInfo(undefinedArg)
+      } catch(err) {
+        //console.log(err)
+        assert(err)
+      }
+    })
+
+    it('init should failed : No such file or directory ', function() {
+      let torrentInfo
+      let wrongPath = './sintel.torrent'
+      try {
+        torrentInfo = new libtorrent.TorrentInfo(wrongPath)
+      } catch(err) {
+        //console.log(err)
+        assert(err)
+      }
+    })
+})

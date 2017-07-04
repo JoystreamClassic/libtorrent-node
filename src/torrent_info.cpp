@@ -62,10 +62,9 @@ NAN_METHOD(TorrentInfo::NewInstance) {
     obj = new TorrentInfo();
   }
 
-  /* Wee need boost::system::error
   if (ec != boost::system::errc::success) {
     return Nan::ThrowError(ec.message().c_str());
-  }*/
+  }
 
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
