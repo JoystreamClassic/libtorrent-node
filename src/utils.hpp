@@ -70,6 +70,10 @@ if(!info.IsConstructCall()) { \
 // Based on v8::Local<v8::Boolean> Nan::New<T>(bool value);
 #define SET_BOOL(o, key, val)   (SET_VAL(o, key, Nan::New(val)))
 
+// @param {char *} val
+// Based on Nan::MaybeLocal<v8::Object> Nan::NewBuffer(char* data, uint32_t size)
+#define SET_BUFFER(o, key, val, size) (Nan::Set(o, Nan::New(key).ToLocalChecked(), Nan::NewBuffer(val, size).ToLocalChecked()))
+
 // @param {const char * | const std::string &} val
 // Based on Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value)
 #define SET_CONST_CHAR(o, key, val)    (Nan::Set(o, Nan::New(key).ToLocalChecked(), Nan::New(val).ToLocalChecked()))

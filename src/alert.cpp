@@ -77,7 +77,9 @@
 #define OBFUCASTED_INFO_HASH_KEY "obfucastedInfoHash"
 #define EVENT_TYPE_KEY "eventType"
 #define LISTEN_INTERFACE_KEY "listenInterface"
+#define PIECE_INDEX "pieceIndex"
 #define ERROR_KEY "error"
+#define BUFFER_KEY "buffer"
 
 #define SET_LIBTORRENT_ALERT_TYPE(o, name) SET_VAL(o, #name, Nan::New<v8::Number>(libtorrent::name::alert_type));
 #define ENCODE_LIBTORRENT_ALERT(name, v) if(const libtorrent::name * p = libtorrent::alert_cast<libtorrent::name>(a)) {v = encode(p); return v;}
@@ -330,7 +332,9 @@ v8::Local<v8::Object> encode(const libtorrent::tracker_alert * a) {
 
    // error_code const error;
    // boost::shared_array<char> const buffer;
+   SET_BUFFER(o, BUFFER_KEY, a->buffer.get(), a->size);
    // piece_index_t const piece;
+   SET_NUMBER(o, PIECE_INDEX, a->piece);
    SET_INT32(o, SIZE_KEY, a->size);
 
    return o;
