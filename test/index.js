@@ -22,7 +22,8 @@ describe('Torrent Info', function() {
       try {
         torrentInfo = new libtorrent.TorrentInfo(correctPath)
       } catch(err) {
-        // Do nothing
+        assert(false)
+        return
       }
       assert(torrentInfo)
     })
@@ -35,7 +36,9 @@ describe('Torrent Info', function() {
       } catch(err) {
         //console.log(err)
         assert(err)
+        return
       }
+      assert(false)
     })
 
     it('init should failed : No such file or directory ', function() {
@@ -46,6 +49,8 @@ describe('Torrent Info', function() {
       } catch(err) {
         //console.log(err)
         assert(err)
+        return
       }
+      assert(false)
     })
 })
