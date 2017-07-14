@@ -55,57 +55,43 @@ libtorrent::add_torrent_params decode(const v8::Local<v8::Value> & v) {
 
   v8::Local<v8::Object> o = v->ToObject();
 
-  try {
+  if (HAS_KEY(o, TI_KEY)) {
     v8::Local<v8::Value> ti_value = GET_VAL(o, TI_KEY);
     if (!ti_value->IsUndefined()) {
       boost::shared_ptr<const libtorrent::torrent_info> torrent_info = TorrentInfo::Unwrap(ti_value->ToObject());
       atp.ti = boost::make_shared<libtorrent::torrent_info>(*torrent_info.get());
     }
-  } catch(const std::runtime_error &) { }
+  }
 
-  try {
-    if (HAS_KEY(o, NAME_KEY)) {
-      atp.name =  GET_STD_STRING(o, NAME_KEY);
-    }
-  } catch(const std::runtime_error &) { }
+  if (HAS_KEY(o, NAME_KEY)) {
+    atp.name =  GET_STD_STRING(o, NAME_KEY);
+  }
 
-  try {
-    if (HAS_KEY(o, SAVE_PATH_KEY)) {
-      atp.save_path =  GET_STD_STRING(o, SAVE_PATH_KEY);
-    }
-  } catch(const std::runtime_error &) { }
+  if (HAS_KEY(o, SAVE_PATH_KEY)) {
+    atp.save_path =  GET_STD_STRING(o, SAVE_PATH_KEY);
+  }
 
-  try {
+  if (HAS_KEY(o, INFO_HASH_KEY)) {
     atp.info_hash = libtorrent::node::sha1_hash::decode(GET_VAL(o, INFO_HASH_KEY));
-  } catch(const std::runtime_error &) { }
+  }
 
-  try {
-    if (HAS_KEY(o, URL_KEY)) {
-      atp.url =  GET_STD_STRING(o, URL_KEY);
-    }
-  } catch(const std::runtime_error &) { }
+  if (HAS_KEY(o, URL_KEY)) {
+    atp.url =  GET_STD_STRING(o, URL_KEY);
+  }
 
-  try {
-    if (HAS_KEY(o, RESUME_DATA_KEY)) {
-      auto begin = GET_BUFFER_BEGIN(o, RESUME_DATA_KEY);
-      auto end = GET_BUFFER_END(o, RESUME_DATA_KEY);
-      std::copy(begin, end, std::back_inserter(atp.resume_data));
-    }
-  } catch(const std::runtime_error &) { }
+  if (HAS_KEY(o, RESUME_DATA_KEY)) {
+    auto begin = GET_BUFFER_BEGIN(o, RESUME_DATA_KEY);
+    auto end = GET_BUFFER_END(o, RESUME_DATA_KEY);
+    std::copy(begin, end, std::back_inserter(atp.resume_data));
+  }
 
-  try {
-    atp.upload_limit =  GET_INT32(o, UPLOAD_LIMIT_KEY);
-  } catch(const std::runtime_error &) { }
+  atp.upload_limit =  GET_INT32(o, UPLOAD_LIMIT_KEY);
 
-  try {
-    atp.download_limit =  GET_INT32(o, DOWNLOAD_LIMIT_KEY);
-  } catch(const std::runtime_error &) { }
+  atp.download_limit =  GET_INT32(o, DOWNLOAD_LIMIT_KEY);
 
-  try {
-    if (HAS_KEY(o, FLAGS_KEY)) {
-      atp.flags = flags::decode(GET_VAL(o, FLAGS_KEY));
-    }
-  } catch (const std::runtime_error &) { }
+  if (HAS_KEY(o, FLAGS_KEY)) {
+    atp.flags = flags::decode(GET_VAL(o, FLAGS_KEY));
+  }
 
   return atp;
 }
@@ -130,7 +116,7 @@ namespace flags {
     SET_BOOL(o, "pinned", (bool)(flags & libtorrent::add_torrent_params::flags_t::flag_pinned));
     SET_BOOL(o, "merge_resume_http_seeds", (bool)(flags & libtorrent::add_torrent_params::flags_t::flag_merge_resume_http_seeds));
     SET_BOOL(o, "stop_when_ready", (bool)(flags & libtorrent::add_torrent_params::flags_t::flag_stop_when_ready));
- 
+
     return o;
   }
 
