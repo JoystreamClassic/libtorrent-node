@@ -14,6 +14,7 @@ NAN_MODULE_INIT(FileStorage::Init) {
   Nan::SetPrototypeMethod(tpl, "filePath", file_path);
   Nan::SetPrototypeMethod(tpl, "fileSize", file_size);
   Nan::SetPrototypeMethod(tpl, "fileOffset", file_offset);
+  Nan::SetPrototypeMethod(tpl, "pieceLength", piece_length);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("FileStorage").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -23,6 +24,7 @@ Local<Object> FileStorage::New(libtorrent::file_storage fs) {
     Nan::EscapableHandleScope scope;
 
     Local<Function> cons = Nan::New(constructor);
+
     Nan::MaybeLocal<Object> obj = cons->NewInstance(Nan::GetCurrentContext());
 
     Nan::ObjectWrap::Unwrap<FileStorage>(obj.ToLocalChecked())->file_storage_ = fs;
@@ -37,6 +39,7 @@ NAN_METHOD(FileStorage::NewInstance) {
   }
 
   FileStorage* obj = new FileStorage();
+
   obj->Wrap(info.This());
 
   RETURN(info.This());
@@ -48,6 +51,9 @@ NAN_METHOD(FileStorage::file_name) {
   uint32_t index;
   if (ARGUMENTS_IS_NUMBER(0)) {
     index = info[0]->IntegerValue();
+  } else {
+    Nan::ThrowTypeError("Index is expected to be a number.");
+    return;
   }
 
   std::string name = FileStorage::Unwrap(info.This())->file_name(index);
@@ -61,11 +67,14 @@ NAN_METHOD(FileStorage::file_path) {
   uint32_t index;
   if (ARGUMENTS_IS_NUMBER(0)) {
     index = info[0]->IntegerValue();
+  } else {
+    Nan::ThrowTypeError("Index is expected to be a number.");
+    return;
   }
 
-  std::string name = FileStorage::Unwrap(info.This())->file_name(index);
+  std::string path = FileStorage::Unwrap(info.This())->file_path(index);
 
-  RETURN(Nan::New<String>(name).ToLocalChecked());
+  RETURN(Nan::New<String>(path).ToLocalChecked());
 };
 
 NAN_METHOD(FileStorage::file_size) {
@@ -74,11 +83,14 @@ NAN_METHOD(FileStorage::file_size) {
   uint32_t index;
   if (ARGUMENTS_IS_NUMBER(0)) {
     index = info[0]->IntegerValue();
+  } else {
+    Nan::ThrowTypeError("Index is expected to be a number.");
+    return;
   }
 
-  std::string name = FileStorage::Unwrap(info.This())->file_name(index);
+  boost::int64_t size = FileStorage::Unwrap(info.This())->file_size(index);
 
-  RETURN(Nan::New<String>(name).ToLocalChecked());
+  RETURN(Nan::New<Number>(size));
 };
 
 NAN_METHOD(FileStorage::file_offset) {
@@ -87,9 +99,19 @@ NAN_METHOD(FileStorage::file_offset) {
   uint32_t index;
   if (ARGUMENTS_IS_NUMBER(0)) {
     index = info[0]->IntegerValue();
+  } else {
+    Nan::ThrowTypeError("Index is expected to be a number.");
+    return;
   }
 
-  std::string name = FileStorage::Unwrap(info.This())->file_name(index);
+  boost::int64_t offset = FileStorage::Unwrap(info.This())->file_offset(index);
 
-  RETURN(Nan::New<String>(name).ToLocalChecked());
+  RETURN(Nan::New<Number>(offset));
+};
+
+NAN_METHOD(FileStorage::piece_length) {
+
+  int piece_length = FileStorage::Unwrap(info.This())->piece_length();
+
+  RETURN(Nan::New<Number>(piece_length));
 };

@@ -87,14 +87,14 @@ NAN_METHOD(TorrentInfo::total_size) {
 
 NAN_METHOD(TorrentInfo::piece_length) {
 
-    int piece_length = TorrentInfo::Unwrap(info.This())->total_size();
+    int piece_length = TorrentInfo::Unwrap(info.This())->piece_length();
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(piece_length));
 }
 
 NAN_METHOD(TorrentInfo::num_pieces) {
 
-    int num_pieces = TorrentInfo::Unwrap(info.This())->total_size();
+    int num_pieces = TorrentInfo::Unwrap(info.This())->num_pieces();
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(num_pieces));
 }
@@ -122,8 +122,10 @@ NAN_METHOD(TorrentInfo::info_hash) {
 };
 
 NAN_METHOD(TorrentInfo::files) {
+    auto ti = TorrentInfo::Unwrap(info.This());
+    libtorrent::file_storage files = ti->files();
 
-    auto files = TorrentInfo::Unwrap(info.This())->files();
+    v8::Local<v8::Object> ret = FileStorage::New(files);
 
-    RETURN(FileStorage::New(files));
+    RETURN(ret);
 };

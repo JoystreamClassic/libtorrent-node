@@ -25,6 +25,7 @@ class FileStorage: public Nan::ObjectWrap {
       static NAN_METHOD(file_path);
       static NAN_METHOD(file_size);
       static NAN_METHOD(file_offset);
+      static NAN_METHOD(piece_length);
 
 };
 #endif // LIBTORRENT_NODE_ERROR_CODE_HPP
