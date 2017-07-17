@@ -330,11 +330,10 @@ v8::Local<v8::Object> encode(const libtorrent::tracker_alert * a) {
  v8::Local<v8::Object> encode(const libtorrent::read_piece_alert * a) {
    v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-   // error_code const error;
-   // boost::shared_array<char> const buffer;
+   if (a->ec) {
+     SET_VAL(o, ERROR_KEY, libtorrent::node::error_code::encode(a->ec));
+   }
    SET_COPY_BUFFER(o, BUFFER_KEY, a->buffer.get(), a->size);
-   //SET_VAL(o, BUFFER_KEY, CharPtrToNodeBuffer(a->buffer.get()))
-   // piece_index_t const piece;
    SET_NUMBER(o, PIECE_INDEX, a->piece);
    SET_INT32(o, SIZE_KEY, a->size);
 
