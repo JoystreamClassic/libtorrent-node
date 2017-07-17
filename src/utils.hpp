@@ -71,8 +71,8 @@ if(!info.IsConstructCall()) { \
 #define SET_BOOL(o, key, val)   (SET_VAL(o, key, Nan::New(val)))
 
 // @param {char *} val
-// Based on Nan::MaybeLocal<v8::Object> Nan::NewBuffer(char* data, uint32_t size)
-#define SET_BUFFER(o, key, val, size) (Nan::Set(o, Nan::New(key).ToLocalChecked(), Nan::NewBuffer(val, size).ToLocalChecked()))
+// Based on Nan::MaybeLocal<v8::Object> Nan::CopyBuffer(const char* data, uint32_t size)
+#define SET_COPY_BUFFER(o, key, val, size) (Nan::Set(o, Nan::New(key).ToLocalChecked(), Nan::CopyBuffer(val, size).ToLocalChecked()))
 
 // @param {const char * | const std::string &} val
 // Based on Nan::MaybeLocal<v8::String> Nan::New<T>(const char * value)
