@@ -11,6 +11,7 @@
 #include "torrent_info.h"
 #include "alert.hpp"
 #include "state_t.hpp"
+#include "file_storage.hpp"
 
 namespace libtorrent {
 namespace node {
@@ -18,6 +19,7 @@ namespace node {
 NAN_MODULE_INIT(Init) {
   TorrentHandle::Init(target);
   TorrentInfo::Init(target);
+  FileStorage::Init(target);
   libtorrent::node::Session::Init(target);
   libtorrent::node::alert_types::InitAlertTypes(target);
   state_t::Init(target);
