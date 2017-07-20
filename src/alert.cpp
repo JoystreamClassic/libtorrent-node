@@ -517,7 +517,7 @@ v8::Local<v8::Object> encode(const libtorrent::torrent_finished_alert * a) {
 v8::Local<v8::Object> encode(const libtorrent::piece_finished_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-  // piece_index_t const piece_index;
+  SET_NUMBER(o, PIECE_INDEX, a->piece_index);
 
   return o;
 }
