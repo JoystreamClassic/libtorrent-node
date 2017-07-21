@@ -52,7 +52,7 @@ namespace libtorrent {
     struct state_update_alert; // todo
     struct tracker_alert; // todo
     struct torrent_added_alert;
-    struct read_piece_alert; // todo
+    struct read_piece_alert;
     struct file_completed_alert; // todo
     struct file_renamed_alert;
     struct file_rename_failed_alert; // todo
@@ -68,7 +68,7 @@ namespace libtorrent {
     struct storage_moved_failed_alert; // todo
     struct torrent_deleted_alert;
     struct torrent_delete_failed_alert; // todo
-    struct piece_finished_alert; // todo
+    struct piece_finished_alert;
     struct hash_failed_alert; // todo
     struct url_seed_alert; // todo
     struct file_error_alert; // todo

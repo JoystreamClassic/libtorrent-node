@@ -2,6 +2,7 @@
 #include "utils.hpp"
 #include "entry.hpp"
 #include "sha1_hash.hpp"
+#include "file_storage.hpp"
 
 #include <libtorrent/create_torrent.hpp>
 
@@ -19,6 +20,7 @@ NAN_MODULE_INIT(TorrentInfo::Init) {
   Nan::SetPrototypeMethod(tpl, "toBencodedEntry", to_bencoded_entry);
   Nan::SetPrototypeMethod(tpl, "isValid", is_valid);
   Nan::SetPrototypeMethod(tpl, "infoHash", info_hash);
+  Nan::SetPrototypeMethod(tpl, "files", files);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("TorrentInfo").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -84,14 +86,14 @@ NAN_METHOD(TorrentInfo::total_size) {
 
 NAN_METHOD(TorrentInfo::piece_length) {
 
-    int piece_length = TorrentInfo::Unwrap(info.This())->total_size();
+    int piece_length = TorrentInfo::Unwrap(info.This())->piece_length();
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(piece_length));
 }
 
 NAN_METHOD(TorrentInfo::num_pieces) {
 
-    int num_pieces = TorrentInfo::Unwrap(info.This())->total_size();
+    int num_pieces = TorrentInfo::Unwrap(info.This())->num_pieces();
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(num_pieces));
 }
@@ -116,4 +118,13 @@ NAN_METHOD(TorrentInfo::info_hash) {
     libtorrent::sha1_hash h(TorrentInfo::Unwrap(info.This())->info_hash());
 
     RETURN(libtorrent::node::sha1_hash::encode(h));
+};
+
+NAN_METHOD(TorrentInfo::files) {
+    auto ti = TorrentInfo::Unwrap(info.This());
+    libtorrent::file_storage files = ti->files();
+
+    v8::Local<v8::Object> ret = FileStorage::New(files);
+
+    RETURN(ret);
 };

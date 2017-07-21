@@ -2,7 +2,7 @@
  * Copyright (C) JoyStream - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Lola Rigaut-Luczack <rllola80@gmail.com>, January 24 2017
+ * Written by Lola Rigaut-Luczak <rllola80@gmail.com>, January 24 2017
  */
 
 #ifndef LIBTORRENT_NODE_ERROR_CODE_HPP
