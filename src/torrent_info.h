@@ -31,6 +31,7 @@ class TorrentInfo: public Nan::ObjectWrap {
       static NAN_METHOD(to_bencoded_entry);
       static NAN_METHOD(is_valid);
       static NAN_METHOD(info_hash);
+      static NAN_METHOD(files);
 
 };
 
