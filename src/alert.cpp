@@ -333,7 +333,9 @@ v8::Local<v8::Object> encode(const libtorrent::tracker_alert * a) {
    if (a->ec) {
      SET_VAL(o, ERROR_KEY, libtorrent::node::error_code::encode(a->ec));
    }
-   SET_COPY_BUFFER(o, BUFFER_KEY, a->buffer.get(), a->size);
+   if (a->buffer) {
+     SET_COPY_BUFFER(o, BUFFER_KEY, a->buffer.get(), a->size);
+   }
    SET_NUMBER(o, PIECE_INDEX, a->piece);
    SET_INT32(o, SIZE_KEY, a->size);
 
