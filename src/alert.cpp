@@ -79,6 +79,7 @@
 #define LISTEN_INTERFACE_KEY "listenInterface"
 #define PIECE_INDEX "pieceIndex"
 #define ERROR_KEY "error"
+#define BUFFER_KEY "buffer"
 
 #define SET_LIBTORRENT_ALERT_TYPE(o, name) SET_VAL(o, #name, Nan::New<v8::Number>(libtorrent::name::alert_type));
 #define ENCODE_LIBTORRENT_ALERT(name, v) if(const libtorrent::name * p = libtorrent::alert_cast<libtorrent::name>(a)) {v = encode(p); return v;}
@@ -329,9 +330,13 @@ v8::Local<v8::Object> encode(const libtorrent::tracker_alert * a) {
  v8::Local<v8::Object> encode(const libtorrent::read_piece_alert * a) {
    v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-   // error_code const error;
-   // boost::shared_array<char> const buffer;
-   // piece_index_t const piece;
+   if (a->ec) {
+     SET_VAL(o, ERROR_KEY, libtorrent::node::error_code::encode(a->ec));
+   }
+   if (a->buffer) {
+     SET_COPY_BUFFER(o, BUFFER_KEY, a->buffer.get(), a->size);
+   }
+   SET_NUMBER(o, PIECE_INDEX, a->piece);
    SET_INT32(o, SIZE_KEY, a->size);
 
    return o;
