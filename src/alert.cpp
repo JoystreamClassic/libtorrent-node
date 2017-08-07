@@ -607,7 +607,7 @@ v8::Local<v8::Object> encode(const libtorrent::torrent_delete_failed_alert * a) 
 v8::Local<v8::Object> encode(const libtorrent::save_resume_data_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-	//std::shared_ptr<entry> const resume_data;
+  //std::shared_ptr<entry> const resume_data;
   SET_VAL(o, "resumeData", entry::encode(*a->resume_data.get()));
 
   return o;
@@ -616,7 +616,8 @@ v8::Local<v8::Object> encode(const libtorrent::save_resume_data_alert * a) {
 v8::Local<v8::Object> encode(const libtorrent::save_resume_data_failed_alert * a) {
   v8::Local<v8::Object> o = encode(static_cast<const libtorrent::torrent_alert *>(a));
 
-	// error_code const error;
+  // error_code const error;
+  SET_VAL(o, ERROR_KEY, error_code::encode(a->error));
 
   return o;
 }
