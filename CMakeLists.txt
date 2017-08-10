@@ -10,6 +10,11 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #node or electron development headers
 include_directories(${CMAKE_JS_INC})
 
+# cmake-js cannot find the nan headers when our package is installed
+# in parallel to it. This happens when pacakge is being installed as
+# a dependency as opposed to just running npm install inside the package
+include_directories("../nan/")
+
 file(GLOB LIBTORRENT_SOURCE_FILES "src/*.cpp")
 list(REMOVE_ITEM LIBTORRENT_SOURCE_FILES "src/LibtorrentAddon.cpp")
 
