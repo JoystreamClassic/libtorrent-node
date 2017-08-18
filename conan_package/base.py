@@ -62,6 +62,9 @@ class LibtorrentNodeBase(ConanFile):
         runtime = "--runtime=%s" % self.options.runtime
         runtime_version = "--runtime-version=%s" % self.options.runtime_version
 
+        # We run cmake-js compile step directly, skipping node-gyp build system because we want to use the
+        # conan dependencies of the project consuming the conan package. node-gyp build system is only used
+        # when libtorrent-node is being built as a standalone npm package
         self.run('npm run compile -- %s %s %s %s %s' % (debug, arch, runtime, runtime_version, msvc_runtime))
 
     def package(self):
