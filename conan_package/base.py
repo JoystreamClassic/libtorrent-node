@@ -3,16 +3,17 @@ import os
 import subprocess
 import shutil
 
-class LibtorrentNodeConan(ConanFile):
+class LibtorrentNodeBase(ConanFile):
     name = "LibtorrentNode"
-    version = "1.1.1"
+    version = "0.0.2"
     license = "(c) JoyStream Inc. 2016-2017"
     url = "https://github.com/JoyStream/libtorrent-node.git"
     description = "Conan recipe for libtorrent-node library"
-    source_url = "git@github.com:JoyStream/libtorrent-node.git"
+    git_repo = "git@github.com:JoyStream/libtorrent-node.git"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     requires = "Libtorrent/1.1.1@joystream/stable"
+    build_policy = "missing"
 
     options = {
       "runtime": ["node", "electron"],
@@ -37,14 +38,10 @@ class LibtorrentNodeConan(ConanFile):
           self.options["Boost"].fPIC=True
           self.options["bzip2"].fPIC=True
 
-    def source(self):
-        self.run("git clone %s" % self.source_url)
-        self.run("cd libtorrent-node && git checkout v%s" %self.version)
-
     def build(self):
-        shutil.copy("conanbuildinfo.cmake", "libtorrent-node/")
+        shutil.copy("conanbuildinfo.cmake", "repo/module/")
 
-        os.chdir('libtorrent-node')
+        os.chdir('repo/module')
         self.run('npm install cmake-js')
         self.run('npm install nan')
 
@@ -68,8 +65,8 @@ class LibtorrentNodeConan(ConanFile):
         self.run('npm run compile -- %s %s %s %s %s' % (debug, arch, runtime, runtime_version, msvc_runtime))
 
     def package(self):
-        self.copy("*.hpp", dst="include/libtorrent-node/", src="libtorrent-node/src/")
-        self.copy("*.h", dst="include/libtorrent-node/", src="libtorrent-node/src/")
+        self.copy("*.hpp", dst="include/libtorrent-node/", src="repo/module/src/")
+        self.copy("*.h", dst="include/libtorrent-node/", src="repo/module/src/")
         self.copy("*.a", dst="lib", keep_path=False)
         self.copy("*.lib", dst="lib", keep_path=False)
         self.copy("*.node", dst="addon", keep_path=False)

@@ -2,13 +2,9 @@ from conans import ConanFile
 import os
 import shutil
 
-channel = os.getenv("CONAN_CHANNEL", "stable")
-username = os.getenv("CONAN_USERNAME", "joystream")
-
-
 class LibtorrentNodeTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "LibtorrentNode/1.1.1@%s/%s" % (username, channel)
+    requires = "LibtorrentNode/0.0.0@%s/%s" % ("joystream", "testing")
 
     options = {
       "runtime": ["node", "electron"],
