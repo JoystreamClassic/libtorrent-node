@@ -4,16 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install": "conan install --build=missing && cmake-js compile",
-    "compile": "cmake-js compile",
-    "rebuild": "cmake-js rebuild",
     "test": "mocha --recursive",
     "test_electron": "electron-mocha --recursive"
   },
   "dependencies": {
     "bindings": "^1.2.1",
     "cmake-js": "^3.5.0",
-    "nan": "^2.6.2"
+    "fs-extra": "^4.0.1",
+    "minimist": "^1.2.0",
+    "nan": "^2.6.2",
+    "rimraf": "^2.6.1"
   },
   "devDependencies": {
     "electron-mocha": "^3.3.0",
