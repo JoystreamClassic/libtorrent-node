@@ -15,6 +15,7 @@ NAN_MODULE_INIT(FileStorage::Init) {
   Nan::SetPrototypeMethod(tpl, "fileSize", file_size);
   Nan::SetPrototypeMethod(tpl, "fileOffset", file_offset);
   Nan::SetPrototypeMethod(tpl, "pieceLength", piece_length);
+  Nan::SetPrototypeMethod(tpl, "numFiles", num_files);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("FileStorage").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -114,4 +115,11 @@ NAN_METHOD(FileStorage::piece_length) {
   int piece_length = FileStorage::Unwrap(info.This())->piece_length();
 
   RETURN(Nan::New<Number>(piece_length));
+};
+
+NAN_METHOD(FileStorage::num_files) {
+
+  int num_files = FileStorage::Unwrap(info.This())->num_files();
+
+  RETURN(Nan::New<Number>(num_files));
 };
