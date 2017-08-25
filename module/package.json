@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha --recursive",
     "test_electron": "electron-mocha --recursive",
-    "compile": "cmake-js compile"
+    "cmake-js": "cmake-js"
   },
   "dependencies": {
     "bindings": "^1.2.1",
