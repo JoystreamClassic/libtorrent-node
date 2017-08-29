@@ -6,7 +6,15 @@ class LibtorrentNode(ConanFile):
     requires = "Libtorrent/1.1.1@joystream/stable"
     generators = "cmake"
 
+    options = {
+      "runtime": ["node", "electron"],
+      "runtime_version": "ANY"
+    }
+
     def configure(self):
+        if self.options.runtime_version == "":
+          raise ValueError('Invalid runtime_version value')
+
         # build static libs
         self.options["Libtorrent"].deprecated_functions=False
         self.options["Libtorrent"].shared=False
