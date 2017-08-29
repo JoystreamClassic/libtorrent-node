@@ -1,6 +1,3 @@
 build/
-conanbuildinfo.cmake
-conaninfo.txt
-node_modules/
-conan_package/test_package/build
 *.pyc
+
