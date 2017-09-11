@@ -54,7 +54,7 @@ libtorrent::settings_pack Session::session_settings(bool enableDHT) noexcept {
                         libtorrent::alert::dht_notification +
 
                         // Enables alerts for when blocks are requested and completed. Also when pieces are completed.
-                        libtorrent::alert::progress_notification +
+                        // libtorrent::alert::progress_notification +
 
                         // Enables stats_alert approximately once every second, for every active torrent.
                         // These alerts contain all statistics counters for the interval since the lasts stats alert.
