@@ -135,11 +135,11 @@ NAN_METHOD(Session::New) {
   libtorrent::settings_pack sett;
   libtorrent::dht_settings dht_settings;
 
-  int64_t port;
+  // By default listen on a random port
+  int64_t port = 0;
+
   if (ARGUMENTS_IS_NUMBER(0)) {
     port = info[0]->IntegerValue();
-  } else {
-    port = 6881;
   }
 
   sett.set_str(libtorrent::settings_pack::listen_interfaces, "0.0.0.0:"+ std::to_string(port));
