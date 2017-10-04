@@ -46,6 +46,17 @@ v8::Local<v8::Object> encode(const libtorrent::torrent_status & ts) {
   SET_NUMBER(o, NUM_SEEDS_KEY, ts.num_seeds);
   SET_NUMBER(o, NUM_PEERS_KEY, ts.num_peers);
 
+  SET_BOOL(o, "uploadMode", ts.upload_mode);
+  SET_BOOL(o, "shareMode", ts.share_mode);
+  SET_BOOL(o, "superSeeding", ts.super_seeding);
+  SET_BOOL(o, "paused", ts.paused);
+  SET_BOOL(o, "autoManaged", ts.auto_managed);
+  SET_BOOL(o, "isSeeding", ts.is_seeding);
+  SET_BOOL(o, "isFinished", ts.is_finished);
+  SET_BOOL(o, "seedMode", ts.seed_mode);
+  SET_BOOL(o, "isLoaded", ts.is_loaded);
+  SET_BOOL(o, "stopWhenReady", ts.stop_when_ready);
+
   return o;
 }
 
