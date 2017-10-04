@@ -120,7 +120,16 @@ namespace flags {
     return o;
   }
 
-#define FLAG_IS_SET(o, flag) (HAS_KEY(o, #flag) && GET_BOOL(o, #flag))
+  // If the key for the flag is defined on the object its value is set on the flags, otherwise flags is unchanged
+  void apply_flag_value(const v8::Local<v8::Object> &obj, const char * key, boost::uint64_t & flags, const boost::uint64_t flag) {
+    if (HAS_KEY(obj, key)) {
+      if (GET_BOOL(obj, key)) {
+        flags |= flag;
+      } else {
+        flags &= ~flag;
+      }
+    }
+  }
 
   boost::uint64_t decode(const v8::Local<v8::Value> & v) {
     if(!v->IsObject())
@@ -128,26 +137,26 @@ namespace flags {
 
     v8::Local<v8::Object> o = v->ToObject();
 
-    // initialize the with default flags set
+    // use default flags
     boost::uint64_t flags = libtorrent::add_torrent_params::flags_t::default_flags;
 
-    // flags override the defaults
-    if(FLAG_IS_SET(o, "seed_mode")) flags |= libtorrent::add_torrent_params::flags_t::flag_seed_mode;
-    if(FLAG_IS_SET(o, "override_resume_data")) flags |= libtorrent::add_torrent_params::flags_t::flag_override_resume_data;
-    if(FLAG_IS_SET(o, "upload_mode")) flags |= libtorrent::add_torrent_params::flags_t::flag_upload_mode;
-    if(FLAG_IS_SET(o, "share_mode")) flags |= libtorrent::add_torrent_params::flags_t::flag_share_mode;
-    if(FLAG_IS_SET(o, "apply_ip_filter")) flags |= libtorrent::add_torrent_params::flags_t::flag_apply_ip_filter;
-    if(FLAG_IS_SET(o, "paused")) flags |= libtorrent::add_torrent_params::flags_t::flag_paused;
-    if(FLAG_IS_SET(o, "auto_managed")) flags |= libtorrent::add_torrent_params::flags_t::flag_auto_managed;
-    if(FLAG_IS_SET(o, "duplicate_is_error")) flags |= libtorrent::add_torrent_params::flags_t::flag_duplicate_is_error;
-    if(FLAG_IS_SET(o, "merge_resume_trackers")) flags |= libtorrent::add_torrent_params::flags_t::flag_merge_resume_trackers;
-    if(FLAG_IS_SET(o, "update_subscribe")) flags |= libtorrent::add_torrent_params::flags_t::flag_update_subscribe;
-    if(FLAG_IS_SET(o, "super_seeding")) flags |= libtorrent::add_torrent_params::flags_t::flag_super_seeding;
-    if(FLAG_IS_SET(o, "sequential_download")) flags |= libtorrent::add_torrent_params::flags_t::flag_sequential_download;
-    if(FLAG_IS_SET(o, "use_resume_save_path")) flags |= libtorrent::add_torrent_params::flags_t::flag_use_resume_save_path;
-    if(FLAG_IS_SET(o, "pinned")) flags |= libtorrent::add_torrent_params::flags_t::flag_pinned;
-    if(FLAG_IS_SET(o, "merge_resume_http_seeds")) flags |= libtorrent::add_torrent_params::flags_t::flag_merge_resume_http_seeds;
-    if(FLAG_IS_SET(o, "stop_when_ready")) flags |= libtorrent::add_torrent_params::flags_t::flag_stop_when_ready;
+    // override the defaults if value is set in object
+    apply_flag_value(o, "seed_mode", flags, libtorrent::add_torrent_params::flags_t::flag_seed_mode);
+    apply_flag_value(o, "override_resume_data", flags, libtorrent::add_torrent_params::flags_t::flag_override_resume_data);
+    apply_flag_value(o, "upload_mode", flags, libtorrent::add_torrent_params::flags_t::flag_upload_mode);
+    apply_flag_value(o, "share_mode", flags, libtorrent::add_torrent_params::flags_t::flag_share_mode);
+    apply_flag_value(o, "apply_ip_filter", flags, libtorrent::add_torrent_params::flags_t::flag_apply_ip_filter);
+    apply_flag_value(o, "paused", flags, libtorrent::add_torrent_params::flags_t::flag_paused);
+    apply_flag_value(o, "auto_managed", flags, libtorrent::add_torrent_params::flags_t::flag_auto_managed);
+    apply_flag_value(o, "duplicate_is_error", flags, libtorrent::add_torrent_params::flags_t::flag_duplicate_is_error);
+    apply_flag_value(o, "merge_resume_trackers", flags, libtorrent::add_torrent_params::flags_t::flag_merge_resume_trackers);
+    apply_flag_value(o, "update_subscribe", flags, libtorrent::add_torrent_params::flags_t::flag_update_subscribe);
+    apply_flag_value(o, "super_seeding", flags, libtorrent::add_torrent_params::flags_t::flag_super_seeding);
+    apply_flag_value(o, "sequential_download", flags, libtorrent::add_torrent_params::flags_t::flag_sequential_download);
+    apply_flag_value(o, "use_resume_save_path", flags, libtorrent::add_torrent_params::flags_t::flag_use_resume_save_path);
+    apply_flag_value(o, "pinned", flags, libtorrent::add_torrent_params::flags_t::flag_pinned);
+    apply_flag_value(o, "merge_resume_http_seeds", flags, libtorrent::add_torrent_params::flags_t::flag_merge_resume_http_seeds);
+    apply_flag_value(o, "stop_when_ready", flags, libtorrent::add_torrent_params::flags_t::flag_stop_when_ready);
 
     return flags;
   }
