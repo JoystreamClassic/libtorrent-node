@@ -123,6 +123,9 @@ libtorrent::settings_pack Session::session_settings(bool enableDHT) noexcept {
     // are run on the same machie, and all peers in a swarm has the same IP address.
     pack.set_bool(libtorrent::settings_pack::allow_multiple_connections_per_ip, true);
 
+    // Default alert queue size (1000) might be too small, bumping it up to avoid dropped alerts
+    // A high rate of alerts can happen when adding many large torrents as they are being checked
+    pack.set_int(libtorrent::settings_pack::alert_queue_size, 5000);
 
     return pack;
 }
