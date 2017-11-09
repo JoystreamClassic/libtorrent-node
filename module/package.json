@@ -1,7 +1,11 @@
 {
   "name": "libtorrent-bindings",
   "version": "0.0.5",
-  "description": "",
+  "description": "Native bindings for libtorrent-rasterbar",
+  "keywords": "libtorrent",
+  "homepage": "https://github.com/JoyStream/libtorrent-node",
+  "bugs": "https://github.com/JoyStream/libtorrent-node/issues",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive",
