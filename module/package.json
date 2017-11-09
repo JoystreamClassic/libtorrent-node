@@ -1,6 +1,6 @@
 {
   "name": "libtorrent-bindings",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Native bindings for libtorrent-rasterbar",
   "keywords": "libtorrent",
   "homepage": "https://github.com/JoyStream/libtorrent-node",
