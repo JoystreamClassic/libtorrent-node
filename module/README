@@ -1,6 +1,14 @@
 Getting Started:
 
-    git clone https://github.com/JoyStream/libtorrent-node
+```
+git clone https://github.com/JoyStream/libtorrent-node
+```
+
+Build requires [Conan](https://www.conan.io/downloads) C/C++ package manager
+
+After installing conan add joystream repository:
+
+`conan remote add joystream https://conan.joystream.co:9300 True`
 
 Install dependencies and build node module:
 
