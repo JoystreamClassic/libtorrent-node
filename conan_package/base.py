@@ -5,11 +5,12 @@ import shutil
 
 class LibtorrentNodeBase(ConanFile):
     name = "LibtorrentNode"
-    version = "0.0.5"
+    version = "0.0.6"
     license = "(c) JoyStream Inc. 2016-2017"
     url = "https://github.com/JoyStream/libtorrent-node.git"
     description = "Conan recipe for libtorrent-node library"
-    git_repo = "git@github.com:JoyStream/libtorrent-node.git"
+    repo_ssh_url = "git@github.com:JoyStream/libtorrent-node.git"
+    repo_https_url = "https://github.com/JoyStream/libtorrent-node.git"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     requires = "Libtorrent/1.1.1@joystream/stable"
