@@ -21,8 +21,9 @@ class Session : public Nan::ObjectWrap {
 
   private:
     Session(boost::shared_ptr<libtorrent::session> session);
-    static libtorrent::settings_pack session_settings(bool enableDHT) noexcept;
 
+    static libtorrent::settings_pack default_session_settings() noexcept;
+    static void update_settings(const v8::Local<v8::Value> &, libtorrent::settings_pack &);
 
     boost::shared_ptr<libtorrent::session> _session;
     static Nan::Persistent<v8::Function> constructor;
@@ -50,6 +51,7 @@ class Session : public Nan::ObjectWrap {
     static NAN_METHOD(set_alert_notify);
     static NAN_METHOD(dht_announce);
     static NAN_METHOD(dht_get_peers);
+    static NAN_METHOD(apply_settings);
 
 };
 
