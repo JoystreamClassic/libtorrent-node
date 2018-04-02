@@ -1,16 +1,27 @@
 var libtorrent = require('../')
 var assert = require('assert');
 
-describe('libtorrent addon', function() {
+describe('libtorrent addon', function (done) {
+    it('can create a session and pop alerts', function () {
+      const listenPort = 6060
 
-    it('can create a session and pop alerts', function(){
-      let session = new libtorrent.Session()
+      let session = new libtorrent.Session({
+        listen_interfaces: '0.0.0.0:' + listenPort,
+        enable_dht: false,
+        allow_multiple_connections_per_ip: false
+      })
+
+      assert(session.listenPort(), listenPort)
 
       var alerts = session.popAlerts()
 
-      for (var i in alerts) {
-        console.log(alerts[i])
+      for (let i in alerts) {
+        console.log(alerts[i].message)
       }
+
+      setTimeout(function () {
+        done()
+      }, 4000)
     })
 })
 

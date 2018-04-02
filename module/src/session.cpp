@@ -34,6 +34,8 @@ NAN_MODULE_INIT(Session::Init) {
   Nan::SetPrototypeMethod(tpl, "addExtension", add_extension);
 #endif // TORRENT_DISABLE_EXTENSIONS
 
+  Nan::SetPrototypeMethod(tpl, "applySettings", apply_settings);
+
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("Session").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
 }
@@ -43,7 +45,7 @@ Session::Session(boost::shared_ptr<libtorrent::session> session)
   _encoders.push_back(libtorrent::node::alert_types::alertEncoder);
 };
 
-libtorrent::settings_pack Session::session_settings(bool enableDHT) noexcept {
+libtorrent::settings_pack Session::default_session_settings() noexcept {
 
     // Initialize with default values
     libtorrent::settings_pack pack;
@@ -79,15 +81,18 @@ libtorrent::settings_pack Session::session_settings(bool enableDHT) noexcept {
                         libtorrent::alert::dht_log_notification +
 
                         // Enables verbose logging from the piece picker
-                        libtorrent::alert::picker_log_notification;
+                        libtorrent::alert::picker_log_notification +
+
+                        // Enables logging of port mapping events - for debugging the UPnP or NAT-PMP implementation
+                        libtorrent::alert::port_mapping_log_notification;
 
     pack.set_int(libtorrent::settings_pack::alert_mask, libtorrent::alert::all_categories & ~ ignoredAlerts);
 
-    // Enable all default extensions, and possibly DHT.
-    pack.set_bool(libtorrent::settings_pack::enable_upnp, true);
-    pack.set_bool(libtorrent::settings_pack::enable_natpmp, true);
-    pack.set_bool(libtorrent::settings_pack::enable_lsd, true);
-    pack.set_bool(libtorrent::settings_pack::enable_dht, enableDHT);
+    // Disable all default extensions
+    pack.set_bool(libtorrent::settings_pack::enable_upnp, false);
+    pack.set_bool(libtorrent::settings_pack::enable_natpmp, false);
+    pack.set_bool(libtorrent::settings_pack::enable_lsd, false);
+    pack.set_bool(libtorrent::settings_pack::enable_dht, false);
 
     // This is the client identification to the tracker.
     // The recommended format of this string is: "ClientName/ClientVersion libtorrent/libtorrentVersion".
@@ -121,13 +126,101 @@ libtorrent::settings_pack Session::session_settings(bool enableDHT) noexcept {
     // the same IP address is not allowed by default, to prevent abusive behavior by peers.
     // It may be useful to allow such connections in cases where simulations
     // are run on the same machie, and all peers in a swarm has the same IP address.
-    pack.set_bool(libtorrent::settings_pack::allow_multiple_connections_per_ip, true);
+    pack.set_bool(libtorrent::settings_pack::allow_multiple_connections_per_ip, false);
 
     // Default alert queue size (1000) might be too small, bumping it up to avoid dropped alerts
     // A high rate of alerts can happen when adding many large torrents as they are being checked
     pack.set_int(libtorrent::settings_pack::alert_queue_size, 5000);
 
+    // Add DHT routers
+    pack.set_str(libtorrent::settings_pack::dht_bootstrap_nodes,
+      "router.bittorrent.com:6881,router.utorrent.com:6881,dht.libtorrent.org:25401,dht.transmissionbt.com:6881,dht.aelitis.com:6881");
+
+    pack.set_str(libtorrent::settings_pack::listen_interfaces, "0.0.0.0:7881");
+
     return pack;
+}
+
+void Session::update_settings(const v8::Local<v8::Value> & settings, libtorrent::settings_pack &pack) {
+  if(!settings->IsObject())
+    throw std::runtime_error("Argument must be dictionary.");
+
+  v8::Local<v8::Object> o = settings->ToObject();
+
+  if (HAS_KEY(o, "listen_interfaces")) {
+    auto value = GET_STD_STRING(o, "listen_interfaces");
+    pack.set_str(libtorrent::settings_pack::listen_interfaces, value);
+  }
+
+  if (HAS_KEY(o, "outgoing_interfaces")) {
+    auto value = GET_STD_STRING(o, "outgoing_interfaces");
+    pack.set_str(libtorrent::settings_pack::outgoing_interfaces, value);
+  }
+
+  if (HAS_KEY(o, "proxy_type")) {
+    auto value = GET_INT32(o, "proxy_type");
+    pack.set_int(libtorrent::settings_pack::proxy_type, value);
+  }
+
+  if (HAS_KEY(o, "proxy_hostname")) {
+    auto value = GET_STD_STRING(o, "proxy_hostname");
+    pack.set_str(libtorrent::settings_pack::proxy_hostname, value);
+  }
+
+  if (HAS_KEY(o, "proxy_username")) {
+    auto value = GET_STD_STRING(o, "proxy_username");
+    pack.set_str(libtorrent::settings_pack::proxy_username, value);
+  }
+
+  if (HAS_KEY(o, "proxy_password")) {
+    auto value = GET_STD_STRING(o, "proxy_password");
+    pack.set_str(libtorrent::settings_pack::proxy_password, value);
+  }
+
+  if (HAS_KEY(o, "proxy_port")) {
+    auto value = GET_INT32(o, "proxy_port");
+    pack.set_int(libtorrent::settings_pack::proxy_port, value);
+  }
+
+  if (HAS_KEY(o, "i2p_port")) {
+    auto value = GET_INT32(o, "i2p_port");
+    pack.set_int(libtorrent::settings_pack::i2p_port, value);
+  }
+
+  if (HAS_KEY(o, "enable_dht")) {
+    auto enable = GET_BOOL(o, "enable_dht");
+    pack.set_bool(libtorrent::settings_pack::enable_dht, enable);
+  }
+
+  if (HAS_KEY(o, "allow_multiple_connections_per_ip")) {
+    auto enable = GET_BOOL(o, "allow_multiple_connections_per_ip");
+    pack.set_bool(libtorrent::settings_pack::allow_multiple_connections_per_ip, enable);
+  }
+
+  if (HAS_KEY(o, "enable_upnp")) {
+    auto enable = GET_BOOL(o, "enable_upnp");
+    pack.set_bool(libtorrent::settings_pack::enable_upnp, enable);
+  }
+
+  if (HAS_KEY(o, "enable_natpmp")) {
+    auto enable = GET_BOOL(o, "enable_natpmp");
+    pack.set_bool(libtorrent::settings_pack::enable_natpmp, enable);
+  }
+
+  if (HAS_KEY(o, "enable_lsd")) {
+    auto enable = GET_BOOL(o, "enable_lsd");
+    pack.set_bool(libtorrent::settings_pack::enable_lsd, enable);
+  }
+
+  if (HAS_KEY(o, "anonymous_mode")) {
+    auto enable = GET_BOOL(o, "anonymous_mode");
+    pack.set_bool(libtorrent::settings_pack::anonymous_mode, enable);
+  }
+
+  if (HAS_KEY(o, "force_proxy")) {
+    auto enable = GET_BOOL(o, "force_proxy");
+    pack.set_bool(libtorrent::settings_pack::force_proxy, enable);
+  }
 }
 
 NAN_METHOD(Session::New) {
@@ -135,28 +228,16 @@ NAN_METHOD(Session::New) {
 
   boost::shared_ptr<libtorrent::session> session;
 
-  libtorrent::settings_pack sett;
+  libtorrent::settings_pack session_settings = default_session_settings();
   libtorrent::dht_settings dht_settings;
 
-  // By default listen on a random port
-  int64_t port = 0;
-
-  if (ARGUMENTS_IS_NUMBER(0)) {
-    port = info[0]->IntegerValue();
+  if (ARGUMENTS_IS_OBJECT(0)) {
+    update_settings(info[0], session_settings);
   }
 
-  sett.set_str(libtorrent::settings_pack::listen_interfaces, "0.0.0.0:"+ std::to_string(port));
-  session = boost::shared_ptr<libtorrent::session>(new libtorrent::session(sett));
+  session = boost::shared_ptr<libtorrent::session>(new libtorrent::session(session_settings));
 
   session->set_dht_settings(dht_settings);
-
-  // Add DHT routers
-  session->add_dht_router(std::make_pair(std::string("router.bittorrent.com"), 6881));
-  session->add_dht_router(std::make_pair(std::string("router.utorrent.com"), 6881));
-  session->add_dht_router(std::make_pair(std::string("router.bitcomet.com"), 6881));
-
-  // Enable DHT node, now that routers have been added
-  session->apply_settings(session_settings(true));
 
   Session* obj = new Session(session);
   obj->Wrap(info.This());
@@ -332,6 +413,23 @@ NAN_METHOD(Session::dht_get_peers) {
   Session* session = ObjectWrap::Unwrap<Session>(info.This());
 
   session->_session->dht_get_peers(info_hash);
+
+  RETURN_VOID;
+}
+
+NAN_METHOD(Session::apply_settings) {
+  REQUIRE_ARGUMENTS(1);
+
+  if (ARGUMENTS_IS_OBJECT(0)) {
+
+    Session* session = ObjectWrap::Unwrap<Session>(info.This());
+
+    libtorrent::settings_pack pack;
+
+    update_settings(info[0], pack);
+
+    session->_session->apply_settings(pack);
+  }
 
   RETURN_VOID;
 }
