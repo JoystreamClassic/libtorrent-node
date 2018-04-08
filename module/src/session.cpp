@@ -1,8 +1,6 @@
 #include "session.hpp"
 
 #define CORE_USER_AGENT_NAME "JoyStream"
-#define CORE_VERSION_MAJOR 0
-#define CORE_VERSION_MINOR 1
 #define CORE_PEER_ID "JS"
 
 namespace libtorrent {
@@ -99,11 +97,7 @@ libtorrent::settings_pack Session::default_session_settings() noexcept {
     // This name will not only be used when making HTTP requests, but also when sending BEP10 extended handshake
     // if handshake_client_version is left blank.
     // default: "libtorrent/" LIBTORRENT_VERSION
-    pack.set_str(libtorrent::settings_pack::user_agent, std::string(CORE_USER_AGENT_NAME) +
-                                                        std::string("/") +
-                                                        std::to_string(CORE_VERSION_MAJOR) +
-                                                        std::string(".") +
-                                                        std::to_string(CORE_VERSION_MINOR));
+    pack.set_str(libtorrent::settings_pack::user_agent, std::string(CORE_USER_AGENT_NAME));
 
     // Client name and version identifier sent to peers in the BEP10 handshake message.
     // If this is an empty string, the user_agent is used instead.
@@ -117,7 +111,7 @@ libtorrent::settings_pack Session::default_session_settings() noexcept {
     // '-', two characters for client id, four ascii digits for version number, '-', followed by random numbers.
     // For example: '-AZ2060-'...
     // default: "-LT1100-"
-    std::string peerIdString = libtorrent::fingerprint(CORE_PEER_ID, CORE_VERSION_MAJOR, CORE_VERSION_MINOR, 0, 0).to_string();
+    std::string peerIdString = libtorrent::fingerprint(CORE_PEER_ID, 0, 0, 0, 0).to_string();
 
     pack.set_str(libtorrent::settings_pack::peer_fingerprint, peerIdString);
 
@@ -221,6 +215,33 @@ void Session::update_settings(const v8::Local<v8::Value> & settings, libtorrent:
     auto enable = GET_BOOL(o, "force_proxy");
     pack.set_bool(libtorrent::settings_pack::force_proxy, enable);
   }
+
+  if (HAS_KEY(o, "user_agent")) {
+    auto value = GET_STD_STRING(o, "user_agent");
+    pack.set_str(libtorrent::settings_pack::user_agent, value);
+  }
+
+  if (HAS_KEY(o, "peer_fingerprint")) {
+    auto fingerprint = GET_VAL(o, "peer_fingerprint");
+
+    if (fingerprint->IsObject()) {
+      auto value = fingerprint->ToObject();
+      auto name = GET_STD_STRING(value, "name");
+      auto major = GET_INT32(value, "major");
+      auto minor = GET_INT32(value, "minor");
+      auto revision = GET_INT32(value, "revision");
+      auto tag = GET_INT32(value, "tag");
+
+      std::string peerIdString = libtorrent::fingerprint(name.c_str(), major, minor, revision, tag).to_string();
+      pack.set_str(libtorrent::settings_pack::peer_fingerprint, peerIdString);
+    }
+  }
+
+  if (HAS_KEY(o, "alert_mask")) {
+    auto value = GET_INT32(o, "alert_mask");
+    pack.set_int(libtorrent::settings_pack::alert_mask, value);
+  }
+
 }
 
 NAN_METHOD(Session::New) {
