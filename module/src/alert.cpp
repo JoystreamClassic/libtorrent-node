@@ -83,6 +83,7 @@
 
 #define SET_LIBTORRENT_ALERT_TYPE(o, name) SET_VAL(o, #name, Nan::New<v8::Number>(libtorrent::name::alert_type));
 #define ENCODE_LIBTORRENT_ALERT(name, v) if(const libtorrent::name * p = libtorrent::alert_cast<libtorrent::name>(a)) {v = encode(p); return v;}
+#define SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(o, notification) SET_VAL(o, #notification, Nan::New<v8::Number>(libtorrent::alert::notification))
 
 namespace libtorrent {
 namespace node {
@@ -266,6 +267,32 @@ NAN_MODULE_INIT(InitAlertTypes) {
 
   SET_VAL(target, "AlertType", object);
 
+  // Export alert categories to use for alert_mask in settings pack
+  v8::Local<v8::Object> notifications = Nan::New<v8::Object>();
+
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, error_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, peer_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, port_mapping_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, storage_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, tracker_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, debug_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, status_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, progress_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, ip_block_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, performance_warning);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, dht_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, stats_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, session_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, torrent_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, peer_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, incoming_request_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, dht_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, dht_operation_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, port_mapping_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, picker_log_notification);
+  SET_LIBTORRET_ALERT_NOTIFICATION_CATEGORY(notifications, all_categories);
+
+  SET_VAL(target, "AlertNotification", notifications);
 }
 
 v8::Local<v8::Object> encode(const libtorrent::alert * a) {
