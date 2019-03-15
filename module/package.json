@@ -1,13 +1,13 @@
 {
   "name": "libtorrent-bindings",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Native bindings for libtorrent-rasterbar",
   "keywords": "libtorrent",
-  "homepage": "https://github.com/JoyStream/libtorrent-node",
-  "bugs": "https://github.com/JoyStream/libtorrent-node/issues",
+  "homepage": "https://github.com/JoyStreamClassic/libtorrent-node",
+  "bugs": "https://github.com/JoyStreamClassic/libtorrent-node/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JoyStream/libtorrent-node"
+    "url": "https://github.com/JoyStreamClassic/libtorrent-node"
   },
   "license": "MIT",
   "main": "index.js",
